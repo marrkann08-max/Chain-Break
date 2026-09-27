@@ -39,7 +39,7 @@ test("bench-simulator packets are never reported as hardware", () => {
   assert.notEqual(status.mode, "HARDWARE");
 });
 
-// Exact shape sent by hardware/chainbreak-node (MPU6050 + button sketch).
+// Exact shape sent by hardware/chainbreak-node (MPU9250 + button sketch).
 const nodePacket = (incident, extra = {}) => ({ ts: 1234, vehicle_id: "CHAINBREAK-NODE-01", speed_kph: 0, track_distance_m: 5120, imu_ax: 0.4, imu_ay: -0.2, imu_az: 9.7, accel_magnitude_ms2: incident ? 31.2 : 9.72, incident, trigger_source: incident ? "imu" : "none", sequence: 7, simulated: false, ...extra });
 
 test("real node packets parse incident, trigger source and IMU magnitude", () => {

@@ -4,7 +4,7 @@
 
 ChainBreak explores a question that conventional safety demos often miss: **when conditions degrade, at what point does a connected warning stop protecting the following driver?**
 
-An ESP32 and MPU6050 act as an incident node. After an incident is detected, ChainBreak models the warning chain from sensing and transmission through driver response and braking. It then tests that chain across 1,200 repeatable scenarios with different network latency, packet loss, grip, sensor availability, and driver delay.
+An ESP32 and MPU9250 act as an incident node. After an incident is detected, ChainBreak models the warning chain from sensing and transmission through driver response and braking. It then tests that chain across 1,200 repeatable scenarios with different network latency, packet loss, grip, sensor availability, and driver delay.
 
 > Track 2 · Safety Testing
 >
@@ -12,7 +12,7 @@ An ESP32 and MPU6050 act as an incident node. After an incident is detected, Cha
 
 ## What it does
 
-- Receives physical incident events from an ESP32, MPU6050, and push button.
+- Receives physical incident events from an ESP32, MPU9250, and push button.
 - Models the approach of a following car toward a stationary incident.
 - Generates 1,200 seeded Latin-hypercube stress scenarios.
 - Classifies outcomes using simulated stopping margin: safe, marginal, or unsafe.
@@ -30,7 +30,7 @@ ChainBreak makes those failure conditions visible and testable. Its output is no
 ## System overview
 
 ```text
-ESP32 + MPU6050 + button
+ESP32 + MPU9250 + button
           │ incident packets
           ▼
 Hardware ingest and freshness checks
@@ -86,9 +86,9 @@ The dashboard also includes a clearly labelled bench simulator for testing the r
 
 ## Hardware setup
 
-The reference node uses an ESP32 development board and an MPU6050 IMU.
+The reference node uses an ESP32 development board and an MPU9250 IMU. ChainBreak currently uses its accelerometer for impact detection; the gyroscope and magnetometer are available for future expansion.
 
-| MPU6050 | ESP32 |
+| MPU9250 | ESP32 |
 |---|---|
 | VCC | 3V3 |
 | GND | GND |
@@ -123,7 +123,7 @@ Every intervention is evaluated against an identical scenario set. A seeded gene
 
 ## Technology
 
-- ESP32, MPU6050, and Arduino C++
+- ESP32, MPU9250, and Arduino C++
 - Node.js HTTP server with no runtime packages
 - HTML, CSS, and vanilla JavaScript dashboard
 - Seeded Latin-hypercube sampling

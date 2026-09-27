@@ -10,6 +10,9 @@ const uint8_t ACCEL_CONFIG = 0x1C;
 const uint8_t ACCEL_XOUT_H = 0x3B;
 const float ACCEL_SCALE = 4096.0;
 
+const uint8_t MPU9250_ID = 0x71;
+const uint8_t MPU9255_ID = 0x73;
+
 const int BUTTON_PIN = 4;
 const float IMPACT_THRESHOLD_G = 2.5;
 const unsigned long POST_INTERVAL_MS = 300;
@@ -38,7 +41,8 @@ bool readRegister(uint8_t reg, uint8_t &value) {
 
 bool configureMpu() {
   uint8_t identity = 0;
-  if (!readRegister(WHO_AM_I, identity) || identity != 0x68) return false;
+  if (!readRegister(WHO_AM_I, identity)) return false;
+  if (identity != MPU9250_ID && identity != MPU9255_ID) return false;
   return writeRegister(PWR_MGMT_1, 0x00) && writeRegister(ACCEL_CONFIG, 0x10);
 }
 
@@ -119,7 +123,7 @@ void setup() {
   Wire.begin(21, 22);
 
   sensorHealthy = configureMpu();
-  Serial.println(sensorHealthy ? "MPU6050 ready at 0x68" : "MPU6050 not detected; check 3V3/GND/SDA21/SCL22");
+  Serial.println(sensorHealthy ? "MPU9250 ready at I2C address 0x68" : "MPU9250 not detected; check 3V3/GND/SDA21/SCL22");
   connectWifi();
 }
 
@@ -136,7 +140,7 @@ void loop() {
   const char *triggerSource = buttonPressed ? "button" : (imuTriggered ? "imu" : "none");
 
   if (!sensorHealthy) {
-    Serial.println("MPU6050 signal lost; packet withheld so ChainBreak declares degraded mode.");
+    Serial.println("MPU9250 signal lost; packet withheld so ChainBreak declares degraded mode.");
     sensorHealthy = configureMpu();
     return;
   }
