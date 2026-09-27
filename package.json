@@ -1,0 +1,14 @@
+{
+  "name": "chainbreak-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "demo": "node server.mjs",
+    "fetch:openf1": "node scripts/fetch-openf1.mjs",
+    "test": "node --test",
+    "check": "node --check server.mjs && node --check lib/app.mjs && node --check lib/stress-engine.mjs && node --check public/app.js && node --test"
+  },
+  "engines": { "node": ">=18" }
+}

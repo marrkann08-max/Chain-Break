@@ -1,0 +1,5 @@
+node_modules/
+.claude/
+hardware/**/secrets.h
+data/openf1-session.json
+*.log

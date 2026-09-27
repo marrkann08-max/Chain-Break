@@ -1,0 +1,16 @@
+[
+  {"t":0,"driver":"CAR 16","speed":278,"throttle":100,"brake":0,"gear":8,"rpm":11150,"distance":4740},
+  {"t":500,"driver":"CAR 16","speed":279,"throttle":100,"brake":0,"gear":8,"rpm":11210,"distance":4779},
+  {"t":1000,"driver":"CAR 16","speed":281,"throttle":100,"brake":0,"gear":8,"rpm":11280,"distance":4818},
+  {"t":1500,"driver":"CAR 16","speed":280,"throttle":96,"brake":0,"gear":8,"rpm":11190,"distance":4857},
+  {"t":2000,"driver":"CAR 16","speed":277,"throttle":72,"brake":0,"gear":8,"rpm":10990,"distance":4895},
+  {"t":2500,"driver":"CAR 16","speed":268,"throttle":20,"brake":55,"gear":7,"rpm":10400,"distance":4932,"yellow":true},
+  {"t":3000,"driver":"CAR 16","speed":246,"throttle":0,"brake":100,"gear":6,"rpm":9900,"distance":4968,"yellow":true},
+  {"t":3500,"driver":"CAR 16","speed":219,"throttle":0,"brake":100,"gear":5,"rpm":9300,"distance":5001,"yellow":true},
+  {"t":4000,"driver":"CAR 16","speed":188,"throttle":0,"brake":100,"gear":4,"rpm":8600,"distance":5030,"yellow":true},
+  {"t":4500,"driver":"CAR 16","speed":151,"throttle":0,"brake":100,"gear":4,"rpm":7900,"distance":5054,"yellow":true},
+  {"t":5000,"driver":"CAR 16","speed":112,"throttle":0,"brake":100,"gear":3,"rpm":7100,"distance":5072,"yellow":true},
+  {"t":5500,"driver":"CAR 16","speed":78,"throttle":0,"brake":80,"gear":2,"rpm":6200,"distance":5085,"yellow":true},
+  {"t":6000,"driver":"CAR 16","speed":51,"throttle":0,"brake":55,"gear":2,"rpm":5400,"distance":5094,"yellow":true},
+  {"t":6500,"driver":"CAR 16","speed":43,"throttle":10,"brake":0,"gear":2,"rpm":5000,"distance":5101,"yellow":true}
+]

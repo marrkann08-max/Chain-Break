@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0f14">
+  <meta name="description" content="ChainBreak — a stress-testing environment for connected motorsport safety systems.">
+  <title>ChainBreak · Safety Stress Test</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0f14'/%3E%3Cpath d='M7 16h7m4 0h7' stroke='%23d9f24f' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-stage="loading">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><i></i><i></i></span>
+      <div><strong>ChainBreak</strong><span>Stress-testing connected motorsport safety systems</span></div>
+    </div>
+    <ul class="chips" aria-label="System status">
+      <li class="chip" id="chip-replay" data-tone="neutral"><span>Replay</span><strong>Loading…</strong></li>
+      <li class="chip" id="chip-hardware" data-tone="neutral"><span>ESP32 link</span><strong>Checking…</strong></li>
+      <li class="chip" id="chip-engine" data-tone="neutral"><span>Engine</span><strong>Local · no internet</strong></li>
+    </ul>
+  </header>
+
+  <main id="main">
+    <section class="runbar" aria-label="Demo controls">
+      <ol class="steps" id="steps">
+        <li data-step="replay"><b>1</b><span>Replay</span></li>
+        <li data-step="incident"><b>2</b><span>Incident</span></li>
+        <li data-step="test"><b>3</b><span>Stress test</span></li>
+        <li data-step="compare"><b>4</b><span>Compare</span></li>
+      </ol>
+      <div class="actions">
+        <button type="button" class="btn" id="btn-replay" aria-keyshortcuts="Space" disabled>▶ Replay telemetry <kbd>Space</kbd></button>
+        <button type="button" class="btn btn-warn" id="btn-incident" aria-keyshortcuts="I" disabled>Trigger incident node <kbd>I</kbd></button>
+        <button type="button" class="btn btn-primary" id="btn-test" aria-keyshortcuts="T" disabled>Run stress test <kbd>T</kbd></button>
+        <button type="button" class="btn btn-ghost" id="btn-reset" aria-keyshortcuts="R" disabled>Reset <kbd>R</kbd></button>
+      </div>
+      <p class="status-line" id="status-line" role="status" aria-live="polite">Loading replay and scenario definition…</p>
+      <div class="progress" id="progress" hidden><i id="progress-fill"></i></div>
+    </section>
+
+    <div class="load-error card" id="load-error" role="alert" hidden>
+      <h2>ChainBreak can’t reach its local server</h2>
+      <p id="load-error-detail">Start it with <code>npm start</code>, then retry.</p>
+      <button type="button" class="btn btn-primary" id="btn-retry">Retry</button>
+    </div>
+
+    <section class="hero" id="hero">
+      <article class="card approach" aria-labelledby="approach-title">
+        <header class="card-head">
+          <div><p class="eyebrow">1 · Incident &amp; approach window</p><h2 id="approach-title">Following car → incident node</h2></div>
+          <span class="tag" id="approach-tag">Replay</span>
+        </header>
+        <div class="figure">
+          <svg id="approach-svg" viewBox="0 0 1000 290" role="img" aria-labelledby="approach-desc">
+            <desc id="approach-desc">Distance-to-incident strip and speed profile for the incident car and the following car.</desc>
+          </svg>
+        </div>
+        <dl class="kpis">
+          <div><dt>Following car</dt><dd id="k-car">—</dd></div>
+          <div><dt>Approach speed</dt><dd id="k-speed">—</dd></div>
+          <div><dt>Distance to node</dt><dd id="k-distance">—</dd></div>
+          <div><dt>Time to node</dt><dd id="k-tth">—</dd></div>
+          <div class="kpi-key"><dt>Brake-by window</dt><dd id="k-window">—</dd></div>
+        </dl>
+        <p class="fine" id="approach-note">Replay shows the bundled synthetic sample. Trigger the incident node to identify the following car.</p>
+        <div class="replay-controls">
+          <label for="scrubber">Replay</label>
+          <input id="scrubber" type="range" min="0" max="0" value="0" step="1" disabled>
+          <output id="clock" for="scrubber">t+0.0 s</output>
+        </div>
+      </article>
+
+      <article class="card boundary" id="boundary-card" aria-labelledby="boundary-title">
+        <p class="eyebrow">2 · Failure boundary · fitted from the sweep</p>
+        <h2 id="boundary-title" class="sr-only">Failure boundary</h2>
+        <div class="boundary-value">
+          <strong id="boundary-value">—</strong>
+          <span>seconds of<br>network latency</span>
+        </div>
+        <p class="boundary-sentence" id="boundary-sentence">Run the stress test to find how much network latency the connected warning can absorb.</p>
+        <div class="subhead">Reference conditions</div>
+        <dl class="ref-list" id="reference-list"><div><dt>Awaiting test</dt><dd>—</dd></div></dl>
+        <div class="subhead">Model check (held-out 20%)</div>
+        <dl class="ref-list" id="quality-list"><div><dt>Awaiting test</dt><dd>—</dd></div></dl>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card sweep" aria-labelledby="sweep-title">
+        <header class="card-head">
+          <div><p class="eyebrow">3 · Stress-test outcomes</p><h2 id="sweep-title">Degraded scenarios · latency × grip</h2></div>
+          <span class="tag" id="sweep-tag">Seeded sweep</span>
+        </header>
+        <div class="counts">
+          <div class="count" data-outcome="safe"><span>Safe</span><strong id="n-safe">—</strong></div>
+          <div class="count" data-outcome="marginal"><span>Marginal</span><strong id="n-marginal">—</strong></div>
+          <div class="count" data-outcome="unsafe"><span>Unsafe</span><strong id="n-unsafe">—</strong></div>
+        </div>
+        <div class="dist-bar" id="dist-bar" aria-hidden="true"><i data-outcome="safe"></i><i data-outcome="marginal"></i><i data-outcome="unsafe"></i></div>
+        <div class="figure">
+          <svg id="scatter" viewBox="0 0 640 340" role="img" aria-labelledby="scatter-desc"><desc id="scatter-desc">Each point is one simulated scenario, placed by network latency and grip, coloured by outcome. The line is the fitted 50% unsafe boundary at reference conditions.</desc></svg>
+        </div>
+        <p class="fine">Counts show coverage of the chosen stress range, not how often these conditions occur in racing. Click a point to inspect it.</p>
+      </article>
+
+      <article class="card interventions" aria-labelledby="int-title">
+        <header class="card-head">
+          <div><p class="eyebrow">4 · Counterfactual race control</p><h2 id="int-title">Same scenarios, different intervention</h2></div>
+          <span class="tag" id="int-tag">—</span>
+        </header>
+        <div id="interventions" class="int-list"><p class="empty">Run the stress test to compare interventions on the identical scenario set.</p></div>
+        <p class="fine">Each connected intervention travels through the same degraded chain (detection → decision → network → driver). Nothing slows the car before the driver has received and reacted to it.</p>
+      </article>
+    </section>
+
+    <section class="grid-2 grid-2-wide">
+      <article class="card inspector" id="inspector" aria-labelledby="insp-title">
+        <header class="card-head">
+          <div><p class="eyebrow">Scenario inspector</p><h2 id="insp-title">What changes if latency increases?</h2></div>
+          <span class="tag">Recomputed live in the browser</span>
+        </header>
+        <div class="inspector-body">
+          <form class="sliders" id="inspector-form" aria-describedby="insp-hint">
+            <p class="fine" id="insp-hint">Available after the stress test. Drag a slider or click a point in the scatter.</p>
+            <div class="slider" id="latency-slider">
+              <label for="in-latency">Network latency <output id="out-latency">—</output></label>
+              <div class="slider-track"><input id="in-latency" name="latencyS" type="range" min="0" max="2.4" step="0.01" disabled><span class="boundary-mark" id="latency-mark" hidden></span></div>
+            </div>
+            <div class="slider">
+              <label for="in-loss">Packet loss <output id="out-loss">—</output></label>
+              <input id="in-loss" name="packetLoss" type="range" min="0" max="0.38" step="0.01" disabled>
+            </div>
+            <div class="slider">
+              <label for="in-grip">Grip (1.00 = dry) <output id="out-grip">—</output></label>
+              <input id="in-grip" name="grip" type="range" min="0.55" max="1" step="0.01" disabled>
+            </div>
+            <div class="slider">
+              <label for="in-delay">Driver response delay <output id="out-delay">—</output></label>
+              <input id="in-delay" name="driverDelayS" type="range" min="0" max="1.15" step="0.01" disabled>
+            </div>
+            <div class="inline-fields">
+              <label class="check"><input id="in-dropout" name="sensorDropout" type="checkbox" disabled> Sensor dropout</label>
+              <label>Intervention <select id="in-intervention" name="intervention" disabled></select></label>
+            </div>
+            <div class="inline-fields">
+              <button type="button" class="btn btn-small" id="btn-ref" disabled>Reference conditions</button>
+              <button type="button" class="btn btn-small" id="btn-animate" disabled>▶ Animate on track</button>
+            </div>
+            <p class="fine" id="insp-source">—</p>
+          </form>
+          <div class="insp-out" aria-live="polite">
+            <div class="verdict" id="verdict" data-outcome="none"><strong>—</strong><span>No scenario selected</span></div>
+            <dl class="mini" id="insp-kpis"></dl>
+            <div class="subhead">Safety chain timeline</div>
+            <div class="figure"><svg id="chain" viewBox="0 0 560 120" role="img" aria-label="Timeline of detection, decision, network delivery, driver reaction and braking"></svg></div>
+            <div class="subhead">This scenario under each intervention</div>
+            <table class="per-int" id="per-int"><thead><tr><th scope="col">Intervention</th><th scope="col">Outcome</th><th scope="col">Stopping margin</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </article>
+
+      <article class="card contributors" aria-labelledby="contrib-title">
+        <header class="card-head">
+          <div><p class="eyebrow">5 · Dominant contributors</p><h2 id="contrib-title">What drives failure</h2></div>
+          <span class="tag">Fitted coefficients</span>
+        </header>
+        <div id="contributors" class="contrib-list"><p class="empty">Waiting for the stress test.</p></div>
+        <p class="fine">Each feature is scaled to its tested range, so a coefficient is the change in log-odds of UNSAFE when that factor moves across its whole range with the others fixed.</p>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card hardware" id="hardware-card" aria-labelledby="hw-title">
+        <header class="card-head">
+          <div><p class="eyebrow">Hardware link · fault injection</p><h2 id="hw-title">ESP32 + IMU incident node</h2></div>
+          <span class="tag">Polls every 1 s</span>
+        </header>
+        <div class="hw-state" id="hw-state" data-state="unknown">
+          <span class="hw-dot" aria-hidden="true"></span>
+          <div><strong id="hw-mode">Checking…</strong><p id="hw-message">—</p></div>
+        </div>
+        <dl class="ref-list" id="hw-details"></dl>
+        <div class="inline-fields">
+          <button type="button" class="btn btn-small" id="btn-bench-start">Start bench simulator</button>
+          <button type="button" class="btn btn-small btn-warn" id="btn-bench-cut" disabled>Cut signal</button>
+        </div>
+        <p class="fine">Bench packets are flagged <code>simulated</code> and go through the real ingest and staleness path. They are never shown as hardware, and a stale link never shows a reading.</p>
+      </article>
+
+      <article class="card assumptions" aria-labelledby="assump-title">
+        <header class="card-head">
+          <div><p class="eyebrow">6 · Model assumptions &amp; limits</p><h2 id="assump-title">Transparent by design</h2></div>
+          <span class="tag">Prototype</span>
+        </header>
+        <dl class="ref-list two-col" id="assumption-list"><div><dt>Loading</dt><dd>—</dd></div></dl>
+        <ul class="limits">
+          <li>Worst case: the track is blocked, so the following car must stop before the stationary car.</li>
+          <li>Braking is a conservative 1.1 g scaled by grip — below the peak deceleration of a modern single-seater.</li>
+          <li>Intervention responses (target speed, deceleration, VSC decision time) are stated assumptions, not measured driver behaviour.</li>
+          <li>Outcomes are simulated. They are not crash probabilities and this is not a certified safety system.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer>
+      <span>Track 2 · Safety Testing</span>
+      <span>Decision-support prototype — not a certified safety system</span>
+      <span>Keys: Space replay · I incident · T test · R reset</span>
+    </footer>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
