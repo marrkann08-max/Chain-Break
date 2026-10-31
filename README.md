@@ -2,7 +2,7 @@
 
 **A hardware-connected stress-testing environment for motorsport safety systems.**
 
-ChainBreak explores a question that conventional safety demos often miss: **when conditions degrade, at what point does a connected warning stop protecting the following driver?**
+I built ChainBreak to test how network delays, sensor dropouts, and driver reaction time affect a motorsport warning system.
 
 An ESP32 and MPU9250 act as an incident node. After an incident is detected, ChainBreak models the warning chain from sensing and transmission through driver response and braking. It then tests that chain across 1,200 repeatable scenarios with different network latency, packet loss, grip, sensor availability, and driver delay.
 
@@ -23,9 +23,7 @@ An ESP32 and MPU9250 act as an incident node. After an incident is detected, Cha
 
 ## Why it matters
 
-Connected safety systems are normally demonstrated under successful conditions. Real deployments must also remain understandable when a sensor disappears, packets are lost, a network slows down, grip decreases, or a driver reacts late.
-
-ChainBreak makes those failure conditions visible and testable. Its output is not a crash prediction; it is a transparent comparison of stopping outcomes under stated assumptions.
+The dashboard lets me change the conditions and see when the warning arrives too late to help. It compares simulated stopping outcomes under the same assumptions. It does not predict real crashes.
 
 ## System overview
 
